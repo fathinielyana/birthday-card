@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>An Exclusive Two-Page Birthday Surprise 🎁</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <style>
+    /* ---------- Layout ---------- */
+    html,body { height:100%; margin:0; }
+    body {
+      background: linear-gradient(135deg, #003300 0%, #005500 100%);
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      font-family: Georgia, serif;
+      perspective:1000px; /* 3D perspective for flip */
+    }
+
+    .card-container {
+      width:350px;
+      height:450px;
+      position:relative;
+      transform-style:preserve-3d;
+      transition: transform 1s ease;
+      -webkit-transform-style:preserve-3d;
+      -webkit-transition: -webkit-transform 1s ease;
+    }
+
+    /* ---------- Card faces (shared) ---------- */
+    .card-face {
+      position:absolute;
+      width:100%;
+      height:100%;
+      top:0;
+      left:0;
+      border-radius:20px;
+      box-shadow:0 20px 50px rgba(0,0,0,0.5);
+      border:5px solid #89cff0;
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+      align-items:center;
+      text-align:center;
+      backface-visibility:hidden;
+      -webkit-backface-visibility:hidden;
+      overflow:hidden;
+      box-sizing:border-box;
+    }
+
+    /* FRONT */
+    .card-face.card-cover {
+      background: linear-gradient(to bottom right, #5c0000 0%, #800000 100%);
+      color:#89cff0;
+      transform: rotateY(0deg);
+      -webkit-transform: rotateY(0deg);
+    }
+    .card-cover h2 {
+      color:#89cff0;
+      font-size:2.3em;
+      letter-spacing:3px;
+      margin:0 0 30px 0;
+    }
+    .card-cover p {
+      color:#fff;
+      font-style:italic;
+      font-size:1.05em;
+      margin:0 0 20px 0;
+    }
+    .open-button {
+      padding:12px 26px;
+      border:2px solid #89cff0;
+      border-radius:50px;
+      background:#004d00;
+      color:#fff;
+      font-size:1.05em;
+      font-weight:700;
+      cursor:pointer;
+      transition:all .25s ease;
+      box-shadow:0 6px 14px rgba(0,0,0,0.4);
+    }
+    .open-button:hover { transform:scale(1.04); background:#006600; }
+
+    /* BACK */
+    .card-face.card-inner {
+      background:#fdfdfd;
+      padding:30px;
+      transform: rotateY(180deg); /* hidden initially */
+      -webkit-transform: rotateY(180deg);
+    }
+    .card-inner h1 {
+      color:#800000;
+      font-size:2em;
+      letter-spacing:2px;
+      text-transform:uppercase;
+      margin:0 0 18px 0;
+    }
+
+    /* When opened — flip the container */
+    .card-container.open {
+      transform: rotateY(180deg);
+      -webkit-transform: rotateY(180deg);
+    }
+
+    /* ---------- Cake & candle ---------- */
+    .cake {
+      position:relative;
+      width:200px;
+      height:120px;
+      background:#7b3f00;
+      border-radius:10px;
+      margin:18px auto 0;
+      box-shadow: inset 0 8px 15px rgba(0,0,0,0.4), 0 5px 0 #89cff0;
+    }
+    .icing {
+      position:absolute;
+      top:-30px;
+      left:0;
+      width:100%;
+      height:40px;
+      background: linear-gradient(to right, #ffffff, #f0f0f0);
+      border-radius:20px 20px 0 0;
+      box-shadow:0 4px 0 #e0e0e0, inset 0 2px 5px rgba(0,0,0,0.1);
+    }
+    .cake:after {
+      content:"";
+      position:absolute;
+      bottom:-10px;
+      left:5%;
+      width:90%;
+      height:5px;
+      background:#89cff0;
+      border-radius:2px;
+    }
+
+    .candle {
+      position:absolute;
+      bottom:100%;
+      width:10px;
+      height:45px;
+      background:#004d00;
+      border-radius:2px;
+      box-shadow:0 0 0 1px #89cff0;
+    }
+
+    .flame-container {
+      position:absolute;
+      top:-18px;
+      left:50%;
+      transform:translateX(-50%);
+      width:14px;
+      height:25px;
+      overflow:visible;
+      pointer-events:none;
+    }
+    .flame {
+      position:absolute;
+      top:0;
+      left:50%;
+      transform:translateX(-50%);
+      width:12px;
+      height:20px;
+      background: radial-gradient(circle, #ffe066 30%, #ff6f00 60%, transparent 80%);
+      border-radius:50%;
+      animation: flicker 0.25s infinite alternate;
+      filter: drop-shadow(0 0 5px #ff6f00);
+      transition: opacity .6s ease, transform .6s ease;
+    }
+    @keyframes flicker {
+      from { transform: translateX(-50%) scale(1); opacity:0.95; }
+      to   { transform: translateX(-50%) scale(1.05); opacity:0.6; }
+    }
+
+    /* ---------- Wish button & text ---------- */
+    #blow-button {
+      margin-top:20px;
+      padding:10px 20px;
+      border:2px solid #89cff0;
+      border-radius:50px;
+      background:#800000;
+      color:white;
+      font-size:16px;
+      font-weight:700;
+      cursor:pointer;
+      transition:all .25s ease;
+    }
+    #blow-button:hover { background:#a51d42; }
+    #blow-button[disabled] { opacity:.75; cursor:default; transform:none; box-shadow:none; }
+
+    #wish {
+      margin-top:18px;
+      font-size:1.05em;
+      color:#004d00;
+      font-style:italic;
+      letter-spacing:.5px;
+      display:none;
+    }
+
+    /* small responsive tweak */
+    @media (max-width:380px){
+      .card-container { width:300px; height:400px; }
+      .cake { width:170px; height:100px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="card-container" id="cardContainer">
+    <div class="card-face card-cover">
+      <h2>A Message Awaits You...</h2>
+      <p>Please open with full excitement.</p>
+      <button class="open-button" id="openBtn">bukak yee</button>
+    </div>
+
+    <div class="card-face card-inner">
+      <h1>Happy Birthday, Awish !!!!</h1>
+
+      <div class="cake" aria-hidden="true">
+        <div class="icing"></div>
+
+        <div class="candle" style="left:40px;">
+          <div class="flame-container"><div class="flame"></div></div>
+        </div>
+        <div class="candle" style="left:95px;">
+          <div class="flame-container"><div class="flame"></div></div>
+        </div>
+        <div class="candle" style="left:150px;">
+          <div class="flame-container"><div class="flame"></div></div>
+        </div>
+      </div>
+
+      <button id="blow-button">tiup tiup tiup</button>
+
+      <p id="wish"><strong>HAPPY BIRTHDAY KOALA YG BUSHUKKK!!!</strong> Moga awk selalu dipnjgkn umur,berjaya didunia dan akhirat,jd ank yg soleh yee..bljr leklok dkt umt tuhh..and sy nk ckp tenkiuu sbb sudi kwn ngn sy yg begitu rndm..moga kite  selalu kwn tauu..jgn lupa sy and tinggal sy tau koala.. </p>
+    </div>
+  </div>
+
+  <script>
+    // Hook buttons
+    const container = document.getElementById('cardContainer');
+    const openBtn = document.getElementById('openBtn');
+    const blowBtn = document.getElementById('blow-button');
+
+    openBtn.addEventListener('click', () => {
+      container.classList.add('open');
+      // focus the blow button after the flip animation (slight delay)
+      setTimeout(()=> blowBtn.focus(), 600);
+    });
+
+    blowBtn.addEventListener('click', () => {
+      if (blowBtn.disabled) return;
+      const flames = document.querySelectorAll('.flame');
+      flames.forEach(flame => {
+        // fade & shrink
+        flame.style.opacity = '0';
+        flame.style.transform = 'translateX(-50%) scale(.7)';
+        flame.style.animation = 'none';
+        flame.style.filter = 'none';
+        // remove from DOM after the fade so it can't come back
+        setTimeout(()=> {
+          if (flame && flame.parentNode) flame.parentNode.removeChild(flame);
+        }, 650);
+      });
+
+      // show wish and disable button
+      document.getElementById('wish').style.display = 'block';
+      blowBtn.textContent = 'tadaaaa';
+      blowBtn.disabled = true;
+      blowBtn.setAttribute('aria-disabled','true');
+    });
+
+    // small safety: if user clicks the cover area, also open
+    document.querySelector('.card-cover').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') openBtn.click();
+    });
+  </script>
+</body>
+</html>
+
